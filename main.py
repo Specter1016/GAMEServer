@@ -7,12 +7,12 @@ from threading import Thread
 
 class GameServer(Thread):
 
-    def __init__(self, ip, port):
+    def __init__(self, ip, port, i):
 
         Thread.__init__(self);
         self.ip = ip;
         self.port = port;
-        self.i = 0;
+        self.geti = i;
 
 
     def run(self):
@@ -21,9 +21,8 @@ class GameServer(Thread):
             while True:
                 data = client.recv(2048).decode('utf-8');
                 print(f'Show C {self.ip}: data is >> {data}');
-                cdata = bytes(f'TEST CONNETED OK  : {self.i}',encoding='utf-8');
+                cdata = bytes(f'TEST CONNETED OK  : {self.geti}',encoding='utf-8');
                 client.send(cdata);
-                self.i = self.i+1;
                 break;
 
         except OSError as A:
@@ -41,12 +40,13 @@ if __name__ == '__main__':
     threads = [];
 
     print('Server Start >>');
-
+    i = 1;
     while True:
 
         serversoket.listen(4);
         (client, (cip, cport))= serversoket.accept();
-        newclient = GameServer(cip, cport);
+        newclient = GameServer(cip, cport, i);
+        i = i+1;
         newclient.start();
         threads.append(newclient)
 
